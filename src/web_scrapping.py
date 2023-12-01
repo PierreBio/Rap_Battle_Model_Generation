@@ -5,6 +5,16 @@ import time
 from bs4 import BeautifulSoup
 
 def scrape_page(battle_id, counter):
+    """
+        Scrap rap battle data from a page.
+
+    Args:
+        battle_id (str): Battle id of the rap battle page.
+        counter (int): Counter to track a succesfull scrapped page.
+
+    Returns:
+        counter (int): Counter
+    """
     try:
         url = f'https://www.rappad.co/battles/{battle_id}'
         response = requests.get(url)
@@ -69,6 +79,9 @@ def scrape_page(battle_id, counter):
         return counter
 
 def scrape_data():
+    """
+        Scrap all data of all available rap battles.
+    """
     # Initialize the counter
     txt_file_counter = 0
     last_battle_id = 0  # Variable to keep track of the last scraped battle_id
