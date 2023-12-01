@@ -27,10 +27,10 @@ CHECKPOINT_PATH = ROOT_PATH + "rap_checkpoints"
 SAVE_PATH = ROOT_PATH + 'save_files/'
 
 
-# Divide corpus
-# TODO: optimize split
-
 def split_corpus():
+  """
+        Split corpus into train, test and valid datasets.
+  """
   with open(ROOT_PATH + 'corpus_cleaned_lyrics.txt', 'r') as f:
     data_cleaned = f.readlines()
   # DIvide split in order ; not in random
@@ -46,7 +46,10 @@ def split_corpus():
         test_file.write(''.join(test))
 
 class Dictionary(object):
-  # To start in 0 or 1?
+    """
+        Class of a dictionary of the train set. This dictionary is a set of unique words 
+        and their indexes.
+    """
 
     def __init__(self):
         self.word2idx = {}  # if word2idx["hello"] == 42 ...
@@ -68,6 +71,10 @@ class Dictionary(object):
         return len(self.idx2word)
 
 class Corpus(object):
+    """
+        Create tokenized corpus of train, valid and test datasets. These are the inputs
+        of the LSTM model.
+    """
   # Dictionnary to token texts train, valid, test
     def __init__(self, path):
 
@@ -167,6 +174,9 @@ def get_batch(source, i, seq_len):
     return data, target
 
 class LSTMModel(nn.Module):
+    """
+        LSTM model to train with the rap battles data.
+    """
     def __init__(self, ntoken, ninp, nhid, nlayers, dropout=0.2, initrange=0.1):
         """
             ntoken: length of the dictionary,
@@ -232,6 +242,9 @@ def repackage_hidden(h):
         return tuple(repackage_hidden(v) for v in h)
 
 def train():
+    """
+        Train LSTM model with the tokenized train corpus.
+    """
     model.train()
     total_loss = 0.
     start_time = time.time()
@@ -282,6 +295,9 @@ def train():
             start_time = time.time()
 
 def evaluate(source):
+    """
+        Evaluate model with the valid set.
+    """
     model.eval()
     total_loss = 0.
     hidden = model.init_hidden(EVAL_BATCH_SIZE)
@@ -298,8 +314,9 @@ def evaluate(source):
 
 def generate(source, n_words, temperature=1, topk=10):
     """
+        Generate text with the train model.
+
         n_words: number of words to generate
-        fout: optional output file
     """
     vocab_to_int = corpus.dictionary.word2idx
     int_to_vocab = corpus.dictionary.idx2word
@@ -309,12 +326,16 @@ def generate(source, n_words, temperature=1, topk=10):
     hidden = model.init_hidden(1)
     for v in hidden:
         v = v.to(device)
+
+    outputs = [] # List to store all outputs
     for w in source:
         ix = torch.tensor([[vocab_to_int[w]]]).to(device)
         output, hidden = model(ix, hidden)
-    output = output / temperature # Here there is only last output of the for
-    # To change output and idx_max (ix)
-    # To input whole list instead of last item of output
+        outputs.append(output)
+    
+    outputs_tensor = torch.stack(outputs)
+    average_output = torch.mean(outputs_tensor, dim=0)
+    output = average_output / temperature
 
     if topk > 0:
         probas = softmax(torch.topk(softmax(output[0]), topk).values[0]).cpu().detach().numpy()
@@ -337,16 +358,12 @@ def generate(source, n_words, temperature=1, topk=10):
         words.append(int_to_vocab[idx_max])
     text = " ".join(words)
     text = text.replace("<eos>", "\n")
-    # pp.pprint(text)
     return words
 
-
-
-# use CUDA if on a GPU
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
 if __name__ == "__main__":
-    # corpus c'est le text tokenisé, le corpus doit avoir un dictionnaire
+    # use CUDA if on a GPU
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     BATCH_SIZE = 32  # you can choose other values
     EVAL_BATCH_SIZE = 16  # you can choose other values
 

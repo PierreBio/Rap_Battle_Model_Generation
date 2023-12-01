@@ -4,9 +4,12 @@ import sqlite3
 
 import pandas as pd
 
-battles = os.listdir("/content/drive/MyDrive/Colab Notebooks/Data_2")
+battles = os.listdir("/content/drive/MyDrive/Colab Notebooks/Data Scrapped")
 
 def create_table():
+    """
+        Create table in database to save the data from the web scrap. 
+    """
 
     conn = sqlite3.connect("/content/drive/MyDrive/Colab Notebooks/data.db")
 
@@ -29,6 +32,9 @@ def create_table():
     conn = sqlite3.connect("/content/drive/MyDrive/Colab Notebooks/data.db")
 
 def insert_data():
+    """
+        Insert scrapped data into database.
+    """
     conn = sqlite3.connect("/content/drive/MyDrive/Colab Notebooks/data.db")
     cursor = conn.cursor()
     for num, battle in enumerate(battles):
@@ -65,6 +71,9 @@ def insert_data():
     conn.close()
 
 def get_data():
+    """
+        Get all data from data base.
+    """
     conn = sqlite3.connect('/content/drive/MyDrive/Colab Notebooks/data.db')
     df = pd.read_sql_query("SELECT * FROM battles", conn)
     conn.close()
