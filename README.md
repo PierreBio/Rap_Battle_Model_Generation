@@ -13,6 +13,16 @@ Choose among the next workspace:
 - Google Colab account
 - Kaggle account
 
-### How to train a model
+## Steps to develop a model
 
+### 1. Web scrapping: Retrieve all the data from sources (from rap battle websites)
 
+### 2. Data gathering: Put the retrieved data into database
+
+### 3. Data preprocessing: Clean the data and optimize it for the training
+
+### 4. Model training: Use specific algorithms to train our model without taking into account Defender | Challenger architecture
+
+### 5. Model analysis: Play with hyperparameters and check efficience of model (accuracy, loss)
+
+### 6. Model optimization: Whole process to optimize all the previous steps to create a model with Defender | Challenger architecture
