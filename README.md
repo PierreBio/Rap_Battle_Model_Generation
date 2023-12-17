@@ -4,6 +4,8 @@
 
 This project focuses on the creation of a __rap battle model__ for the course of __Natural Language Processing__ of the  __Artificial Intelligence__ master's program at  __Telecom Paris__. The main objective of this work is to provide a complete approach to develop a rap battle model.
 
+You can check the interactive experience we made with this model at this [address](https://github.com/PierreBio/GenRapBattle).
+
 ## Environment Setup
 
 ### Prerequisites
